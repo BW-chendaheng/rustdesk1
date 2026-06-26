@@ -1568,6 +1568,20 @@ Future<void> initGlobalFFI() async {
   debugPrint("_globalFFI init end");
   // after `put`, can also be globally found by Get.find<FFI>();
   Get.put<FFI>(_globalFFI, permanent: true);
+  await _initDefaultServerConfig();
+}
+
+Future<void> _initDefaultServerConfig() async {
+  final idServer = await bind.mainGetOption(key: 'custom-rendezvous-server');
+  final relayServer = await bind.mainGetOption(key: 'relay-server');
+  final apiServer = await bind.mainGetOption(key: 'api-server');
+  final key = await bind.mainGetOption(key: 'key');
+  if (idServer.isEmpty || relayServer.isEmpty || apiServer.isEmpty || key.isEmpty) {
+    await bind.mainSetOption(key: 'custom-rendezvous-server', value: '192.168.0.250:21115');
+    await bind.mainSetOption(key: 'relay-server', value: '192.168.0.250:21117');
+    await bind.mainSetOption(key: 'api-server', value: 'http://192.168.0.250:21118');
+    await bind.mainSetOption(key: 'key', value: 'JCpP3K5VKx6o1ulKcEewj14bcmccgmSZPupVyl97uJI=');
+  }
 }
 
 String translate(String name) {
@@ -2899,10 +2913,10 @@ class ServerConfig {
 
   ServerConfig(
       {String? idServer, String? relayServer, String? apiServer, String? key}) {
-    this.idServer = idServer?.trim() ?? '';
-    this.relayServer = relayServer?.trim() ?? '';
-    this.apiServer = apiServer?.trim() ?? '';
-    this.key = key?.trim() ?? '';
+    this.idServer = idServer?.trim() ?? '192.168.0.250:21115';
+    this.relayServer = relayServer?.trim() ?? '192.168.0.250:21117';
+    this.apiServer = apiServer?.trim() ?? 'http://192.168.0.250:21118';
+    this.key = key?.trim() ?? 'JCpP3K5VKx6o1ulKcEewj14bcmccgmSZPupVyl97uJI=';
   }
 
   /// decode from shared string (from user shared or rustdesk-server generated)
@@ -2940,10 +2954,10 @@ class ServerConfig {
 
   /// from local options
   ServerConfig.fromOptions(Map<String, dynamic> options)
-      : idServer = options['custom-rendezvous-server'] ?? "",
-        relayServer = options['relay-server'] ?? "",
-        apiServer = options['api-server'] ?? "",
-        key = options['key'] ?? "";
+      : idServer = options['custom-rendezvous-server'] ?? '192.168.0.250:21115',
+        relayServer = options['relay-server'] ?? '192.168.0.250:21117',
+        apiServer = options['api-server'] ?? 'http://192.168.0.250:21118',
+        key = options['key'] ?? 'JCpP3K5VKx6o1ulKcEewj14bcmccgmSZPupVyl97uJI=';
 }
 
 Widget dialogButton(String text,
