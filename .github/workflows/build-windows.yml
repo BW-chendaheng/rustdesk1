@@ -53,15 +53,17 @@ jobs:
           vcpkgGitCommitId: ${{ env.VCPKG_COMMIT_ID }}
 
       - name: Install vcpkg dependencies
+        shell: bash
         env:
           VCPKG_DEFAULT_HOST_TRIPLET: x64-windows-static
         run: |
           $VCPKG_ROOT/vcpkg install --triplet x64-windows-static libvpx libyuv opus aom
 
       - name: Build RustDesk
+        shell: bash
         run: |
-          python .\build.py --portable --flutter --skip-portable-pack --hwcodec --vram
-          mv .\flutter\build\windows\x64\runner\Release .\rustdesk
+          python ./build.py --portable --flutter --skip-portable-pack --hwcodec --vram
+          mv ./flutter/build/windows/x64/runner/Release ./rustdesk
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
