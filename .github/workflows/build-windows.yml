@@ -57,7 +57,7 @@ jobs:
         env:
           VCPKG_DEFAULT_HOST_TRIPLET: x64-windows-static
         run: |
-          $VCPKG_ROOT/vcpkg install --triplet x64-windows-static libvpx libyuv opus aom
+          $VCPKG_ROOT/vcpkg install --triplet x64-windows-static
 
       - name: Build RustDesk
         shell: bash
