@@ -34,6 +34,7 @@ jobs:
         with:
           toolchain: ${{ env.RUST_VERSION }}
           targets: x86_64-pc-windows-msvc
+          components: rustfmt
 
       - name: Install LLVM and Clang
         uses: KyleMayes/install-llvm-action@v2
@@ -61,7 +62,8 @@ jobs:
           if ! $VCPKG_ROOT/vcpkg \
             install \
             --triplet x64-windows-static \
-            --x-install-root="$VCPKG_ROOT/installed"; then
+            --x-install-root="$VCPKG_ROOT/installed" \
+            ffmpeg libvpx libyuv opus aom libsodium mfx-dispatch; then
             find "${VCPKG_ROOT}/" -name "*.log" | while read -r _1; do
               echo "$_1:"
               echo "======"
@@ -74,6 +76,11 @@ jobs:
 
       - name: Build RustDesk
         shell: bash
+        env:
+          VCPKG_ROOT: C:\vcpkg
+          INCLUDE: C:\vcpkg\installed\x64-windows-static\include
+          LIB: C:\vcpkg\installed\x64-windows-static\lib
+          PATH: C:\vcpkg\installed\x64-windows-static\bin:$PATH
         run: |
           python ./build.py --portable --flutter --skip-portable-pack --hwcodec --vram
           mv ./flutter/build/windows/x64/runner/Release ./rustdesk
