@@ -62,8 +62,7 @@ jobs:
           if ! $VCPKG_ROOT/vcpkg \
             install \
             --triplet x64-windows-static \
-            --x-install-root="$VCPKG_ROOT/installed" \
-            ffmpeg libvpx libyuv opus aom libsodium mfx-dispatch; then
+            --x-install-root="$VCPKG_ROOT/installed"; then
             find "${VCPKG_ROOT}/" -name "*.log" | while read -r _1; do
               echo "$_1:"
               echo "======"
