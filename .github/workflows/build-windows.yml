@@ -84,8 +84,8 @@ jobs:
           VCPKG_ROOT: C:\vcpkg
           INCLUDE: C:\vcpkg\installed\x64-windows-static\include
           LIB: C:\vcpkg\installed\x64-windows-static\lib
-          PATH: C:\vcpkg\installed\x64-windows-static\bin:$PATH
         run: |
+          export PATH="/c/Users/runneradmin/.cargo/bin:/c/vcpkg/installed/x64-windows-static/bin:$PATH"
           python ./build.py --portable --flutter --skip-portable-pack --hwcodec --vram
           mv ./flutter/build/windows/x64/runner/Release ./rustdesk
 
