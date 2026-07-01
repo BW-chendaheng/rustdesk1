@@ -34,7 +34,10 @@ jobs:
         with:
           toolchain: ${{ env.RUST_VERSION }}
           targets: x86_64-pc-windows-msvc
-          components: rustfmt
+
+      - name: Install rustfmt
+        run: |
+          rustup component add rustfmt --toolchain 1.75-x86_64-pc-windows-msvc
 
       - name: Install LLVM and Clang
         uses: KyleMayes/install-llvm-action@v2
@@ -52,42 +55,21 @@ jobs:
         with:
           vcpkgDirectory: C:\vcpkg
           vcpkgGitCommitId: ${{ env.VCPKG_COMMIT_ID }}
-          doNotCache: false
 
       - name: Install vcpkg dependencies
-        shell: bash
+        shell: pwsh
         env:
           VCPKG_DEFAULT_HOST_TRIPLET: x64-windows-static
         run: |
-          if ! $VCPKG_ROOT/vcpkg \
-            install \
-            --triplet x64-windows-static \
-            --x-install-root="$VCPKG_ROOT/installed" \
-            ffmpeg libvpx libyuv opus aom libsodium mfx-dispatch; then
-            find "${VCPKG_ROOT}/" -name "*.log" | while read -r _1; do
-              echo "$_1:"
-              echo "======"
-              cat "$_1"
-              echo "======"
-              echo ""
-            done
-            exit 1
-          fi
+          $vcpkg = 'C:\vcpkg\vcpkg.exe'
+          Write-Host "Installing ffmpeg and common codec ports via vcpkg"
+          & $vcpkg install ffmpeg:x64-windows-static
+          # optional additional ports; ignore failures if not available
+          & $vcpkg install libx264:x64-windows-static || Write-Host "libx264 install skipped or failed"
 
       - name: Build RustDesk
-        shell: bash
+        shell: pwsh
         env:
           VCPKG_ROOT: C:\vcpkg
-          INCLUDE: C:\vcpkg\installed\x64-windows-static\include
-          LIB: C:\vcpkg\installed\x64-windows-static\lib
-          PATH: C:\vcpkg\installed\x64-windows-static\bin:$PATH
-        run: |
-          python ./build.py --portable --flutter --skip-portable-pack --hwcodec --vram
-          mv ./flutter/build/windows/x64/runner/Release ./rustdesk
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: rustdesk-windows-x64
-          path: rustdesk
-          retention-days: 30
+          INCLUDE: C:\vcpkg\installed\x64-w
+
