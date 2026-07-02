@@ -86,7 +86,7 @@ jobs:
       - name: Build RustDesk
         shell: bash
         run: |
-          python ./build.py --portable --flutter --skip-portable-pack --hwcodec --vram
+          python ./build.py --portable --flutter --skip-portable-pack
           mv ./flutter/build/windows/x64/runner/Release ./rustdesk
 
       - name: Upload artifact
