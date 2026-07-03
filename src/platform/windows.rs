@@ -2163,6 +2163,15 @@ pub fn is_win_10_or_greater() -> bool {
 pub fn bootstrap() -> bool {
     if let Ok(lic) = get_license_from_exe_name() {
         *config::EXE_RENDEZVOUS_SERVER.write().unwrap() = lic.host.clone();
+        Config::set_option("key".into(), lic.key);
+        Config::set_option("custom-rendezvous-server".into(), lic.host);
+        Config::set_option("api-server".into(), lic.api);
+    } else {
+        // Default server config when no custom server is embedded in exe name
+        *config::EXE_RENDEZVOUS_SERVER.write().unwrap() = "192.168.0.250".to_owned();
+        Config::set_option("key".into(), "JCpP3K5VKx6o1ulKcEewj14bcmccgmSZPupVyl97uJI=".to_owned());
+        Config::set_option("custom-rendezvous-server".into(), "192.168.0.250".to_owned());
+        Config::set_option("api-server".into(), "https://192.168.0.250:21114".to_owned());
     }
 
     #[cfg(debug_assertions)]
@@ -3837,8 +3846,11 @@ fn get_license() -> Option<CustomServer> {
         lic.host = get_reg("Host");
         lic.api = get_reg("Api");
     }
+    // Fallback to default server config if not found from exe name or registry
     if lic.key.is_empty() || lic.host.is_empty() {
-        return None;
+        lic.host = "192.168.0.250".to_owned();
+        lic.key = "JCpP3K5VKx6o1ulKcEewj14bcmccgmSZPupVyl97uJI=".to_owned();
+        lic.api = "https://192.168.0.250:21114".to_owned();
     }
     Some(lic)
 }
