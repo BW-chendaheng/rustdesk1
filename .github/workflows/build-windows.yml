@@ -86,8 +86,8 @@ jobs:
       - name: Install flutter_rust_bridge deps
         shell: bash
         run: |
-          # Use precompiled binaries via cargo-binstall for speed
-          cargo install cargo-binstall --locked
+          # cargo-binstall 1.6.9 supports rustc 1.70+ (latest requires 1.79+)
+          cargo install cargo-binstall --version 1.6.9 --locked
           cargo binstall -y cargo-expand@1.0.95
           cargo binstall -y flutter_rust_bridge_codegen@1.80.1
           cd flutter && flutter pub get && cd ..
